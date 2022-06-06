@@ -1,32 +1,13 @@
-import { from, range } from "rxjs";
-import { filter } from "rxjs/operators";
+import { range } from "rxjs";
+import { tap, map } from "rxjs/operators";
 
-range(1, 100).pipe(filter<number>((val, i) => val % 2 === 0 && i > 50)).subscribe(console.log);
+const numbers$ = range(1, 10);
 
-interface People {
-    name: string;
-    age: number;
-}
-
-
-const people: People[] = [
-    {
-        name: "Pepe",
-        age: 32
-    },
-    {
-        name: "Pepa",
-        age: 12
-    },
-    {
-        name: "Lucas",
-        age: 65
-    },
-    {
-        name: "Ambrosia",
-        age: 54
-    },
-];
-
-from<People[]>(people).pipe(filter<People>((p) => p.age < 50)).subscribe(console.log);
-
+numbers$.pipe(
+    tap(n => console.log(`[Tap] ${n}`)),
+    map<number, number>(n => n * 10),
+    tap({
+        next: (n) => console.log(`[Tap observer] ${n}`),
+        complete: () => console.log(`[Completed!]`)
+    }))
+    .subscribe(n => console.log(`[Subscribe] ${n}`));
